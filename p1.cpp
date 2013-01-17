@@ -7,6 +7,8 @@
 #endif
 
 int dumpPPM(int frameNum);
+
+void drawRabbit();
 void drawCube();
 void drawAxis();
 void drawFloor();
@@ -100,7 +102,7 @@ void displayCallback()
   // Draw your rabbit here
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   
-  drawCube();
+  drawRabbit();
 
   
 
