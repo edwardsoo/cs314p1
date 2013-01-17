@@ -9,6 +9,7 @@
 int dumpPPM(int frameNum);
 
 void drawRabbit();
+void drawBox(GLfloat,GLfloat,GLfloat);
 void drawCube();
 void drawAxis();
 void drawFloor();
@@ -125,11 +126,88 @@ void displayCallback()
 
 //---------------------------------------------------------------
 
+void drawRabbit() {
+	glColor3f(1,1,1);
+
+	// mid torso
+	glPushMatrix();
+	glTranslatef(0,1.2,0);
+	glRotatef(15,0,0,1);
+	drawBox(0.8,0.8,0.7);
+	glPushMatrix();
+
+	// lower torso
+	glTranslatef(-0.5,-0.1,0.0);
+	glRotatef(15,0,0,1);
+	drawBox(0.8,0.8,0.7);
+	glPushMatrix();
+
+	// tail
+	glTranslated(-0.7,0.1,0);
+	glRotatef(45,0,0,1);
+	glRotatef(45,0,1,0);
+	glScalef(0.4,0.4,0.4);
+	drawCube();
+	glPopMatrix();
+	glPushMatrix();
+
+	// upper right leg
+	glTranslatef(-0.2,-0.2,0.5);
+	glRotatef(-10,0,0,1);
+	drawBox(0.8,0.5,0.3);
+	glPushMatrix();
+
+	// lower right leg
+	glTranslatef(0,-0.2,0);
+	glRotatef(30,0,0,1);
+	drawBox(1.0,0.3,0.2);
+	glPushMatrix();
+
+	// right leg paw
+	glTranslatef(-0.25,-0.25,0);
+	glRotatef(-50,0,0,1);
+	drawBox(0.7,0.2,0.2);
+	
+	// upper left leg
+	glPopMatrix();
+	glPopMatrix();
+	glPopMatrix();
+	glTranslatef(-0.2,-0.2,-0.5);
+	glRotatef(-10,0,0,1);
+	drawBox(0.8,0.5,0.3);
+	glPushMatrix();
+
+	// lower left leg
+	glTranslatef(0.0,-0.2,0.0);
+	glRotatef(30,0,0,1);
+	drawBox(1.0,0.3,0.2);
+	glPushMatrix();
+
+	// left leg paw
+	glTranslatef(-0.25,-0.25,0);
+	glRotatef(-50,0,0,1);
+	drawBox(0.7,0.2,0.2);
+
+	// upper torso
+	glPopMatrix();
+	glPopMatrix();
+	glPopMatrix();
+
+
+	// neck
+	glPopMatrix();
+
+}
+
+void drawBox(GLfloat x, GLfloat y, GLfloat z) {
+	glPushMatrix();
+	glScalef(x,y,z);
+	drawCube();
+	glPopMatrix();
+}
+
 void drawCube() {
-
-  glColor3f(1,1,1);
   glutSolidCube(1);
-
 }
 
 
