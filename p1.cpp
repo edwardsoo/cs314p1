@@ -5,60 +5,10 @@
 #else
 #  include <GL/glut.h>
 #endif
-
-#define RABBIT_CENTER_Y 1.0
-#define HEAD_LENGTH 0.7
-#define HEAD_WIDTH 0.7
-#define HEAD_DEPTH 0.7
-#define SNOUT_LENGTH 0.15
-#define SNOUT_WIDTH 0.40
-#define SNOUT_DEPTH 0.5
-#define EYE_WIDTH 0.1
-#define EYE_HEIGHT 0.15
-#define NOSE_WIDTH 0.15
-#define NOSE_DEPTH 0.2
-#define EAR_LENGTH 0.8
-#define EAR_WIDTH 0.4
-#define EAR_DEPTH 0.15
-#define NECK_LENGTH 0.7
-#define NECK_WIDTH 0.6
-#define NECK_DEPTH 0.5
-#define M_BODY_LENGTH 1.0
-#define M_BODY_WIDTH 0.8
-#define M_BODY_DEPTH 0.8
-#define U_BODY_LENGTH 0.7
-#define U_BODY_WIDTH 0.8
-#define U_BODY_DEPTH 0.8
-#define L_BODY_LENGTH 0.7
-#define L_BODY_WIDTH 0.6
-#define L_BODY_DEPTH 0.8
-#define TAIL_WIDTH 0.4
-#define U_LEG_LENGTH 0.85
-#define U_LEG_WIDTH 0.55
-#define U_LEG_DEPTH 0.3
-#define L_LEG_LENGTH 0.7
-#define L_LEG_WIDTH 0.25
-#define L_LEG_DEPTH 0.25
-#define LEG_PAW_LENGTH 0.65
-#define LEG_PAW_WIDTH 0.2
-#define LEG_PAW_DEPTH 0.3
-#define U_ARM_LENGTH 0.6
-#define U_ARM_WIDTH 0.3
-#define U_ARM_DEPTH 0.25
-#define L_ARM_LENGTH 0.7
-#define L_ARM_WIDTH 0.25
-#define L_ARM_DEPTH 0.25
-#define ARM_PAW_LENGTH 0.35
-#define ARM_PAW_WIDTH 0.2
-#define ARM_PAW_DEPTH 0.25
-
-double neckAngle = 30;
+#include "rabbit.h"
 
 int dumpPPM(int frameNum);
 
-void drawRabbit();
-void drawArm(GLfloat,GLfloat,GLfloat);
-void drawLeg(GLfloat,GLfloat,GLfloat);
 void drawBox(GLfloat,GLfloat,GLfloat);
 void drawCube();
 void drawAxis();
@@ -179,26 +129,33 @@ void displayCallback()
 
 //---------------------------------------------------------------
 
+void drawEar(GLfloat earAngle) {
+	glPushMatrix();
+	glRotatef(earAngle,1,0,0);
+	glTranslatef(0,EAR_WIDTH/2,0);
+	drawBox(EAR_LENGTH,EAR_WIDTH,EAR_DEPTH);
+	glPopMatrix();
+}
 
 void drawArm(GLfloat uArmAngle, GLfloat lArmAngle, GLfloat pawAngle) {
 	glPushMatrix();
 
 	// upper arm
-	glRotatef(uArmAngle,0,0,1);
+	glRotatef(UBODY_UARM_ANGLE+uArmAngle,0,0,1);
 	glTranslatef(U_ARM_LENGTH/2,-U_ARM_WIDTH/2,0);
 	drawBox(U_ARM_LENGTH,U_ARM_WIDTH,U_ARM_DEPTH);
 	glPushMatrix();
 
 	// lower arm
 	glTranslatef(U_ARM_LENGTH/2-L_ARM_WIDTH/2,0,0);
-	glRotatef(lArmAngle,0,0,1);
+	glRotatef(UARM_LARM_ANGLE+lArmAngle,0,0,1);
 	glTranslatef(L_ARM_LENGTH/2,0,0);
 	drawBox(L_ARM_LENGTH,L_ARM_WIDTH,L_ARM_DEPTH);
 	glPushMatrix();
 
 	// paw
 	glTranslatef(L_ARM_LENGTH/2-ARM_PAW_WIDTH/2,0,0);
-	glRotatef(pawAngle,0,0,1);
+	glRotatef(LARM_PAW_ANGLE+pawAngle,0,0,1);
 	glTranslatef(ARM_PAW_LENGTH/2,0,0);
 	drawBox(ARM_PAW_LENGTH,ARM_PAW_WIDTH,ARM_PAW_DEPTH);
 	
@@ -212,21 +169,21 @@ void drawLeg(GLfloat uLegAngle, GLfloat lLegAngle, GLfloat pawAngle) {
 	glPushMatrix();
 
 	// upper leg
-	glRotatef(uLegAngle,0,0,1);
+	glRotatef(MBODY_ULEG_ANGLE+uLegAngle,0,0,1);
 	glTranslatef(U_LEG_LENGTH/2,0,0);
 	drawBox(U_LEG_LENGTH,U_LEG_WIDTH,U_LEG_DEPTH);
 	glPushMatrix();
 
 	// lower leg
 	glTranslatef(U_LEG_LENGTH/2,-U_LEG_WIDTH/2+L_LEG_WIDTH/2,0);
-	glRotatef(lLegAngle,0,0,1);
+	glRotatef(ULEG_LLEG_ANGLE+lLegAngle,0,0,1);
 	glTranslatef(L_LEG_LENGTH/2,0,0);
 	drawBox(L_LEG_LENGTH,L_LEG_WIDTH,L_LEG_DEPTH);
 	glPushMatrix();
 
 	// leg paw
 	glTranslatef(L_LEG_LENGTH/2,0,0);
-	glRotatef(pawAngle,0,0,1);
+	glRotatef(LLEG_PAW_ANGLE+pawAngle,0,0,1);
 	glTranslatef(LEG_PAW_LENGTH/2,0,0);
 	drawBox(LEG_PAW_LENGTH,LEG_PAW_WIDTH,LEG_PAW_DEPTH);
 
@@ -239,76 +196,66 @@ void drawRabbit() {
 	glColor3f(1,1,1);
 
 	// mid body
-	GLfloat mBodyAngle = 25;
 	glPushMatrix();
-	glTranslatef(0,RABBIT_CENTER_Y,0);
-	glRotatef(mBodyAngle,0,0,1);
+	glTranslatef(0,rabbitY,0);
+	glRotatef(GROUND_MBODY_ANGLE+mBodyAngle,0,0,1);
 	drawBox(M_BODY_LENGTH, M_BODY_WIDTH, M_BODY_DEPTH);
 	glPushMatrix();
 
 	// lower body
-	GLfloat lBodyAngle = 35;
 	glTranslatef(-M_BODY_LENGTH/2,M_BODY_WIDTH/2,0);
-	glRotatef(lBodyAngle,0,0,1);
+	glRotatef(MBODY_LBODY_ANGLE+lBodyAngle,0,0,1);
 	glTranslatef(-L_BODY_LENGTH/2,-L_BODY_WIDTH/2,0);
 	drawBox(L_BODY_LENGTH, L_BODY_WIDTH, L_BODY_DEPTH);
 	glPushMatrix();
 
 	// tail
-	GLfloat tailAngle = 45;
 	glTranslated(-L_BODY_LENGTH/2,L_BODY_WIDTH/2,0);
-	glRotatef(tailAngle,0,0,1);
+	glRotatef(LBODY_TAIL_ANGLE,0,0,1);
 	drawBox(TAIL_WIDTH,TAIL_WIDTH,TAIL_WIDTH);
 	glPopMatrix();
 
 	// right leg
-	glColor4f(1,0,0,0.5);
 	glPushMatrix();
 	glTranslatef(-L_BODY_LENGTH/2,L_BODY_WIDTH/2-U_ARM_WIDTH/2,L_BODY_DEPTH/2+U_LEG_DEPTH/2);
-	drawLeg(-45,-150,135);
+	drawLeg(uRLegAngle,lRLegAngle,rLegPawAngle);
 	glPopMatrix();
 
 	// left leg
 	glPushMatrix();
 	glTranslatef(-L_BODY_LENGTH/2,L_BODY_WIDTH/2-U_ARM_WIDTH/2,-L_BODY_DEPTH/2-U_LEG_DEPTH/2);
-	drawLeg(-45,-150,135);
+	drawLeg(uLLegAngle,lLLegAngle,lLegPawAngle);
 	glPopMatrix();
 
 	// upper torso
-	glColor3f(1,1,1);
 	glPopMatrix();
-	GLfloat uBodyAngle = -30;
 	glTranslatef(M_BODY_LENGTH/2,M_BODY_WIDTH/2,0);
-	glRotatef(uBodyAngle,0,0,1);
+	glRotatef(MBODY_UBODY_ANGLE+uBodyAngle,0,0,1);
 	glTranslatef(U_BODY_LENGTH/2,-U_BODY_WIDTH/2,0);
 	drawBox(U_BODY_LENGTH, U_BODY_WIDTH, U_BODY_DEPTH);
+	glPushMatrix();
 
 	// right arm
-	glColor4f(1,0,0,0.5);
-	glPushMatrix();
 	glTranslatef(U_BODY_LENGTH/2,-U_BODY_WIDTH/2,U_BODY_DEPTH/2);
-	drawArm(-150,90,65);
+	drawArm(uRArmAngle,lRArmAngle,rArmPaw);
 	glPopMatrix();
+	glPushMatrix();
 
 	// right arm
-	glColor4f(1,0,0,0.5);
-	glPushMatrix();
 	glTranslatef(U_BODY_LENGTH/2,-U_BODY_WIDTH/2,-U_BODY_DEPTH/2);
-	drawArm(-150,90,65);
+	drawArm(uLArmAngle,lLArmAngle,lArmPaw);
 	glPopMatrix();
 
 	// neck
-	glColor4f(0,0,1,0.5);
 	glTranslatef(U_BODY_LENGTH/2-NECK_WIDTH/2,U_BODY_WIDTH/2-NECK_WIDTH/2,0);
-	glRotatef(neckAngle,0,0,1);
+	glRotatef(HEAD_NECK_ANGLE+neckAngle,0,0,1);
 	glTranslatef(NECK_LENGTH/2,0,0);
 	drawBox(NECK_LENGTH,NECK_WIDTH,NECK_DEPTH);
 	glPushMatrix();
 
 	// head
-	glColor3f(1,1,1);
 	glTranslatef(NECK_LENGTH/2,NECK_WIDTH/2,0);
-	glRotatef(-45,0,0,1);
+	glRotatef(UBODY_HEAD_ANGLE+headAngle,0,0,1);
 	glTranslatef(HEAD_LENGTH/2,-HEAD_WIDTH/2,0);
 	drawBox(HEAD_LENGTH,HEAD_WIDTH,HEAD_DEPTH);
 	glPushMatrix();
@@ -334,25 +281,21 @@ void drawRabbit() {
 	drawBox(EYE_WIDTH,EYE_HEIGHT,EYE_WIDTH);
 	glPopMatrix();
 
-	// ears
+	// right ear
 	glColor3f(1,1,1);
 	glPushMatrix();
 	glTranslatef(0,HEAD_WIDTH/2,HEAD_DEPTH/2);
-	glRotatef(90,0,0,1);
-	glRotatef(-15,0,1,0);
-	glTranslatef(EAR_LENGTH/2,0,0);
-	drawBox(EAR_LENGTH,EAR_WIDTH,EAR_DEPTH);
+	glRotatef(HEAD_EAR_X_ANGLE,1,0,0);
+	drawEar(rEarAngle);
 	glPopMatrix();
+
+	// left ear
 	glPushMatrix();
 	glTranslatef(0,HEAD_WIDTH/2,-HEAD_DEPTH/2);
-	glRotatef(90,0,0,1);
-	glRotatef(15,0,1,0);
-	glTranslatef(EAR_LENGTH/2,0,0);
-	drawBox(EAR_LENGTH,EAR_WIDTH,EAR_DEPTH);
+	glRotatef(-HEAD_EAR_X_ANGLE,1,0,0);
+	drawEar(lEarAngle);
 	glPopMatrix();
 
-
-	
 	glPopMatrix();
 	glPopMatrix();
 
