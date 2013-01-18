@@ -189,10 +189,13 @@ void drawRabbit() {
 	drawBox(0.7,0.2,0.2);
 
 	// upper torso
+	glColor3f(1,0,0);
 	glPopMatrix();
 	glPopMatrix();
 	glPopMatrix();
-
+	glRotatef(-60,0,0,1);
+	glTranslatef(0.2,0.3,0.0);
+	drawBox(0.6,0.5,0.7);
 
 	// neck
 	glPopMatrix();
