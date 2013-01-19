@@ -44,8 +44,86 @@ void keyboardCallback(unsigned char c, int x, int y) {
 	case 'r':
 		camera = 'r';
 		break;
+	case 'l':
+		if (!(rabbitState & L_ARM_UP)) {
+			uLArmAngle = ARM_UP_U_ARM_ANGLE;
+			lLArmAngle = ARM_UP_L_ARM_ANGLE;
+			lArmPaw = ARM_UP_PAW_ANGLE;
+			rabbitState |= L_ARM_UP;
+		} else {
+			uLArmAngle = 0;
+			lLArmAngle = 0;
+			lArmPaw = 0;
+			rabbitState &= ~L_ARM_UP;
+		}
+		break;
+	case 'm':
+		if (!(rabbitState & R_ARM_UP)) {
+			uRArmAngle = ARM_UP_U_ARM_ANGLE;
+			lRArmAngle = ARM_UP_L_ARM_ANGLE;
+			rArmPaw = ARM_UP_PAW_ANGLE;
+			rabbitState |= R_ARM_UP;
+		} else {
+			uRArmAngle = 0;
+			lRArmAngle = 0;
+			rArmPaw = 0;
+			rabbitState &= ~R_ARM_UP;
+		}
+		break;
+	case 'n':
+		if (!(rabbitState & R_LEG_UP)) {
+			uLLegAngle = LEG_UP_U_LEG_ANGLE;
+			lLLegAngle = LEG_UP_L_LEG_ANGLE;
+			lLegPawAngle = LEG_UP_PAW_ANGLE;
+			rabbitState |= R_LEG_UP;
+		} else {
+			uLLegAngle = 0;
+			lLLegAngle = 0;
+			lLegPawAngle = 0;
+			rabbitState &= ~R_LEG_UP;
+		}
+		break;
+	case 'o':
+		if (!(rabbitState & L_LEG_UP)) {
+			uRLegAngle = LEG_UP_U_LEG_ANGLE;
+			lRLegAngle = LEG_UP_L_LEG_ANGLE;
+			rLegPawAngle = LEG_UP_PAW_ANGLE;
+			rabbitState |= L_LEG_UP;
+		} else {
+			uRLegAngle = 0;
+			lRLegAngle = 0;
+			rLegPawAngle = 0;
+			rabbitState &= ~L_LEG_UP;
+		}
+		break;
+	case 'e':
+		if (!(rabbitState & R_EAR_DOWN)) {
+			rEarAngle = EAR_DOWN_R_EAR_ANGLE;
+			rabbitState |= R_EAR_DOWN;
+		} else {
+			rEarAngle = 0;
+			rabbitState &= ~R_EAR_DOWN;
+		}
+		break;
+	case 'w':
+		if (!(rabbitState & L_EAR_DOWN)) {
+			lEarAngle = -EAR_DOWN_R_EAR_ANGLE;
+			rabbitState |= L_EAR_DOWN;
+		} else {
+			lEarAngle = 0;
+			rabbitState &= ~L_EAR_DOWN;
+		}
+		break;
 	case 'h':
-		neckAngle = 0;
+		if (!(rabbitState & NECK_DOWN)) {
+			neckAngle = NECK_DOWN_NECK_ANGLE;
+			headAngle = NECK_DOWN_HEAD_ANGLE;
+			rabbitState |= NECK_DOWN;
+		} else {
+			neckAngle = 0;
+			headAngle = 0;
+			rabbitState &= ~NECK_DOWN;
+		}
 		break;
 	case 'i':
 		dumpPPM(iCount);
@@ -142,7 +220,7 @@ void drawArm(GLfloat uArmAngle, GLfloat lArmAngle, GLfloat pawAngle) {
 
 	// upper arm
 	glRotatef(UBODY_UARM_ANGLE+uArmAngle,0,0,1);
-	glTranslatef(U_ARM_LENGTH/2,-U_ARM_WIDTH/2,0);
+	glTranslatef(U_ARM_LENGTH/2,0,0);
 	drawBox(U_ARM_LENGTH,U_ARM_WIDTH,U_ARM_DEPTH);
 	glPushMatrix();
 
@@ -169,7 +247,7 @@ void drawLeg(GLfloat uLegAngle, GLfloat lLegAngle, GLfloat pawAngle) {
 	glPushMatrix();
 
 	// upper leg
-	glRotatef(MBODY_ULEG_ANGLE+uLegAngle,0,0,1);
+	glRotatef(LBODY_ULEG_ANGLE+uLegAngle,0,0,1);
 	glTranslatef(U_LEG_LENGTH/2,0,0);
 	drawBox(U_LEG_LENGTH,U_LEG_WIDTH,U_LEG_DEPTH);
 	glPushMatrix();
@@ -216,18 +294,20 @@ void drawRabbit() {
 	glPopMatrix();
 
 	// right leg
+	glColor4f(1,0,0,0.5);
 	glPushMatrix();
-	glTranslatef(-L_BODY_LENGTH/2,L_BODY_WIDTH/2-U_ARM_WIDTH/2,L_BODY_DEPTH/2+U_LEG_DEPTH/2);
+	glTranslatef(-L_BODY_LENGTH/2+U_ARM_WIDTH/4,L_BODY_WIDTH/2-U_ARM_WIDTH/2,L_BODY_DEPTH/2+U_LEG_DEPTH/4);
 	drawLeg(uRLegAngle,lRLegAngle,rLegPawAngle);
 	glPopMatrix();
 
 	// left leg
 	glPushMatrix();
-	glTranslatef(-L_BODY_LENGTH/2,L_BODY_WIDTH/2-U_ARM_WIDTH/2,-L_BODY_DEPTH/2-U_LEG_DEPTH/2);
+	glTranslatef(-L_BODY_LENGTH/2+U_ARM_WIDTH/4,L_BODY_WIDTH/2-U_ARM_WIDTH/2,-L_BODY_DEPTH/2-U_LEG_DEPTH/4);
 	drawLeg(uLLegAngle,lLLegAngle,lLegPawAngle);
 	glPopMatrix();
 
 	// upper torso
+	glColor3f(1,1,1);
 	glPopMatrix();
 	glTranslatef(M_BODY_LENGTH/2,M_BODY_WIDTH/2,0);
 	glRotatef(MBODY_UBODY_ANGLE+uBodyAngle,0,0,1);
@@ -236,27 +316,29 @@ void drawRabbit() {
 	glPushMatrix();
 
 	// right arm
-	glTranslatef(U_BODY_LENGTH/2,-U_BODY_WIDTH/2,U_BODY_DEPTH/2);
+	glColor4f(1,0,0,0.5);
+	glTranslatef(U_BODY_LENGTH/2-U_ARM_WIDTH/2,-U_BODY_WIDTH/4,U_BODY_DEPTH/2);
 	drawArm(uRArmAngle,lRArmAngle,rArmPaw);
 	glPopMatrix();
 	glPushMatrix();
 
-	// right arm
-	glTranslatef(U_BODY_LENGTH/2,-U_BODY_WIDTH/2,-U_BODY_DEPTH/2);
+	// left arm
+	glTranslatef(U_BODY_LENGTH/2-U_ARM_WIDTH/2,-U_BODY_WIDTH/4,-U_BODY_DEPTH/2);
 	drawArm(uLArmAngle,lLArmAngle,lArmPaw);
 	glPopMatrix();
 
 	// neck
-	glTranslatef(U_BODY_LENGTH/2-NECK_WIDTH/2,U_BODY_WIDTH/2-NECK_WIDTH/2,0);
-	glRotatef(HEAD_NECK_ANGLE+neckAngle,0,0,1);
+	glColor3f(1,1,1);
+	glTranslatef(U_BODY_LENGTH/2-NECK_WIDTH/4,U_BODY_WIDTH/2-NECK_WIDTH/2,0);
+	glRotatef(UBODY_NECK_ANGLE+neckAngle,0,0,1);
 	glTranslatef(NECK_LENGTH/2,0,0);
 	drawBox(NECK_LENGTH,NECK_WIDTH,NECK_DEPTH);
 	glPushMatrix();
 
 	// head
-	glTranslatef(NECK_LENGTH/2,NECK_WIDTH/2,0);
-	glRotatef(UBODY_HEAD_ANGLE+headAngle,0,0,1);
-	glTranslatef(HEAD_LENGTH/2,-HEAD_WIDTH/2,0);
+	glTranslatef(NECK_LENGTH/2-HEAD_WIDTH/2,NECK_WIDTH/2-HEAD_WIDTH/4,0);
+	glRotatef(NECK_HEAD_ANGLE+headAngle,0,0,1);
+	glTranslatef(HEAD_LENGTH/2,0,0);
 	drawBox(HEAD_LENGTH,HEAD_WIDTH,HEAD_DEPTH);
 	glPushMatrix();
 
