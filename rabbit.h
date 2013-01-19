@@ -25,13 +25,13 @@
 #define M_BODY_WIDTH 0.8
 #define M_BODY_DEPTH 0.7
 #define U_BODY_LENGTH 0.6
-#define U_BODY_WIDTH 0.8
+#define U_BODY_WIDTH 0.7
 #define U_BODY_DEPTH 0.7
 #define L_BODY_LENGTH 0.7
-#define L_BODY_WIDTH 0.6
+#define L_BODY_WIDTH 0.7
 #define L_BODY_DEPTH 0.7
 #define TAIL_WIDTH 0.4
-#define U_LEG_LENGTH 0.85
+#define U_LEG_LENGTH 0.75
 #define U_LEG_WIDTH 0.55
 #define U_LEG_DEPTH 0.25
 #define L_LEG_LENGTH 0.7
@@ -51,7 +51,7 @@
 #define ARM_PAW_DEPTH 0.3
 
 // rabbit relative body parts angle
-#define DEFAULT_RABBIT_Y 1.0
+#define DEFAULT_Y 1.0
 #define JUMP_RABBIT_Y 2.0
 #define UBODY_NECK_ANGLE 20
 #define NECK_HEAD_ANGLE -30
@@ -61,8 +61,8 @@
 #define MBODY_UBODY_ANGLE -15
 #define LBODY_TAIL_ANGLE 45
 #define LBODY_ULEG_ANGLE -45
-#define ULEG_LLEG_ANGLE -125
-#define LLEG_PAW_ANGLE 130
+#define ULEG_LLEG_ANGLE -130
+#define LLEG_PAW_ANGLE 135
 #define UBODY_UARM_ANGLE -120
 #define UARM_LARM_ANGLE 30
 #define LARM_PAW_ANGLE 85
@@ -79,6 +79,7 @@
 #define CURL_UP 0x0100
 #define JUMP 0x0200
 
+// states-specific angles
 #define NECK_DOWN_NECK_ANGLE -25
 #define NECK_DOWN_HEAD_ANGLE -35
 #define EAR_DOWN_R_EAR_ANGLE 150
@@ -88,14 +89,37 @@
 #define LEG_UP_U_LEG_ANGLE 30
 #define LEG_UP_L_LEG_ANGLE -30
 #define LEG_UP_PAW_ANGLE 20
+#define REAR_UP_Y_LEVEL 1.5
+#define REAR_UP_MBODY_ANGLE 70
+#define REAR_UP_LBODY_ANGLE -20
+#define REAR_UP_TAIL_ANGLE -45
+#define REAR_UP_U_LEG_ANGLE -30
+#define REAR_UP_L_LEG_ANGLE -20
+#define REAR_UP_U_ARM_ANGLE -60
+#define REAR_UP_L_ARM_ANGLE 60
+#define REAR_UP_ARM_PAW_ANGLE -150
+#define CURL_UP_Y_LEVEL 0.7
+#define CURL_UP_MBODY_ANGLE -20
+#define CURL_UP_LBODY_ANGLE 10
+#define CURL_UP_UBODY_ANGLE -10
+#define CURL_UP_NECK_ANGLE 90
+#define CURL_UP_HEAD_ANGLE -60
+#define CURL_UP_TAIL_ANGLE 60
+#define CURL_UP_L_LEG_ANGLE -15
+#define CURL_UP_LEG_PAW_ANGLE 25
+#define CURL_UP_U_ARM_ANGLE -55
+#define CURL_UP_L_ARM_ANGLE 90
+#define CURL_UP_ARM_PAW_ANGLE -5
 
-GLfloat rabbitY = DEFAULT_RABBIT_Y;
+
+GLfloat yLevel = DEFAULT_Y;
 GLfloat neckAngle = 0;
 GLfloat headAngle = 0;
 GLfloat rEarAngle = 0;
 GLfloat lEarAngle = 0;
 GLfloat mBodyAngle = 0; 
 GLfloat lBodyAngle = 0;
+GLfloat tailAngle = 0;
 GLfloat uRLegAngle = 0;
 GLfloat lRLegAngle = 0;
 GLfloat rLegPawAngle = 0;
@@ -115,3 +139,5 @@ void drawRabbit();
 void drawEar(GLfloat);
 void drawArm(GLfloat,GLfloat,GLfloat);
 void drawLeg(GLfloat,GLfloat,GLfloat);
+
+void toggleHead();
