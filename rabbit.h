@@ -79,6 +79,7 @@
 #define REAR_UP 0x0080
 #define CURL_UP 0x0100
 #define JUMP 0x0200
+#define SHUT_EYES 0x0400
 
 
 // states-specific values
@@ -96,8 +97,6 @@
 #define LEG_UP_PAW_ANGLE 20
 
 #define REAR_UP_Y 0.5
-#define REAR_UP_NECK_ANGLE -25
-#define REAR_UP_HEAD_ANGLE -35
 #define REAR_UP_U_BODY_ANGLE 15
 #define REAR_UP_M_BODY_ANGLE 70
 #define REAR_UP_L_BODY_ANGLE -10
@@ -115,8 +114,6 @@
 #define CURL_UP_UBODY_ANGLE -10
 #define CURL_UP_NECK_ANGLE 90
 #define CURL_UP_HEAD_ANGLE -60
-#define CURL_UP_R_EYE_SHUT 0.8
-#define CURL_UP_L_EYE_SHUT 0.8
 #define CURL_UP_TAIL_ANGLE 45
 #define CURL_UP_U_LEG_ANGLE 0
 #define CURL_UP_L_LEG_ANGLE -10
@@ -124,6 +121,20 @@
 #define CURL_UP_U_ARM_ANGLE -55
 #define CURL_UP_L_ARM_ANGLE 90
 #define CURL_UP_ARM_PAW_ANGLE -5
+
+#define JUMP_Y 1.0
+#define JUMP_NECK_ANGLE 0
+#define JUMP_HEAD_ANGLE 0
+#define JUMP_MBODY_ANGLE -30
+#define JUMP_LBODY_ANGLE -10
+#define JUMP_UBODY_ANGLE 15
+#define JUMP_TAIL_ANGLE 30
+#define JUMP_U_LEG_ANGLE -90
+#define JUMP_L_LEG_ANGLE 90
+#define JUMP_LEG_PAW_ANGLE -60
+
+#define SHUT_EYES_R_EYE_SHUT 0.8
+#define SHUT_EYES_L_EYE_SHUT 0.8
 
 
 // rabbit varibles indices
@@ -180,3 +191,5 @@ void toggleRightLeg();
 void toggleLeftLeg();
 void toggleRearUp();
 void toggleCurlUp();
+void toggleJump();
+void toggleShutEyes();

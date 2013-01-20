@@ -89,6 +89,12 @@ void keyboardCallback(unsigned char c, int x, int y) {
 	case 'w':
 		toggleLeftEar();
 		break;
+	case 'j':
+		toggleJump();
+		break;
+	case 's':
+		toggleShutEyes();
+		break;
 	case 'i':
 		dumpPPM(iCount);
 		iCount++;
@@ -206,34 +212,47 @@ void toggleLeftLeg() {
 	oldVal[L_LEG_PAW] = currVal[L_LEG_PAW];
 }
 
+void toggleShutEyes() {
+	if (!(rabbitState & SHUT_EYES)) {
+		newVal[R_EYE_SHUT] = SHUT_EYES_R_EYE_SHUT;
+		newVal[L_EYE_SHUT] = SHUT_EYES_L_EYE_SHUT;
+		rabbitState |= SHUT_EYES;
+	} else {
+		newVal[R_EYE_SHUT] = 0;
+		newVal[L_EYE_SHUT] = 0;
+		rabbitState &= ~SHUT_EYES;
+	}
+	oldVal[R_EYE_SHUT] = currVal[R_EYE_SHUT];
+	oldVal[L_EYE_SHUT] = currVal[L_EYE_SHUT];
+}
+
 void toggleRearUp() {
-	// rear up and these states are mutually exclusive
-	rabbitState &= ~(NECK_DOWN|R_ARM_UP|L_ARM_UP|R_LEG_UP|L_LEG_UP|CURL_UP|JUMP);
+	// rear up resets these states
+	rabbitState &= ~(R_ARM_UP|L_ARM_UP|R_LEG_UP|L_LEG_UP|CURL_UP|JUMP);
 	if (!(rabbitState & REAR_UP)) {
+		if (!(rabbitState & NECK_DOWN)) {
+			toggleHead();
+		}
+		if (rabbitState & SHUT_EYES) {
+			toggleShutEyes();
+		}
 		newVal[RABBIT_Y] = REAR_UP_Y;
-		newVal[NECK] = REAR_UP_NECK_ANGLE;
-		newVal[HEAD] = REAR_UP_HEAD_ANGLE;
 		newVal[U_BODY] = REAR_UP_U_BODY_ANGLE;
 		newVal[M_BODY] = REAR_UP_M_BODY_ANGLE;
 		newVal[L_BODY] = REAR_UP_L_BODY_ANGLE;
 		newVal[TAIL] = REAR_UP_TAIL_ANGLE;
-		newVal[U_R_LEG] = REAR_UP_U_LEG_ANGLE;
-		newVal[L_R_LEG] = REAR_UP_L_LEG_ANGLE;
-		newVal[R_LEG_PAW] = REAR_UP_LEG_PAW_ANGLE;
-		newVal[U_L_LEG] = REAR_UP_U_LEG_ANGLE;
-		newVal[L_L_LEG] = REAR_UP_L_LEG_ANGLE;
-		newVal[L_LEG_PAW] = REAR_UP_LEG_PAW_ANGLE;
-		newVal[U_R_ARM] = REAR_UP_U_ARM_ANGLE;
-		newVal[L_R_ARM] = REAR_UP_L_ARM_ANGLE;
-		newVal[R_ARM_PAW] = REAR_UP_ARM_PAW_ANGLE;
-		newVal[U_L_ARM] = REAR_UP_U_ARM_ANGLE;
-		newVal[L_L_ARM] = REAR_UP_L_ARM_ANGLE;
-		newVal[L_ARM_PAW] = REAR_UP_ARM_PAW_ANGLE;
+		newVal[U_R_LEG] = newVal[U_L_LEG] = REAR_UP_U_LEG_ANGLE;
+		newVal[L_R_LEG] = newVal[L_L_LEG] = REAR_UP_L_LEG_ANGLE;
+		newVal[R_LEG_PAW] = newVal[L_LEG_PAW] = REAR_UP_LEG_PAW_ANGLE;
+		newVal[U_R_ARM] = newVal[U_L_ARM] = REAR_UP_U_ARM_ANGLE;
+		newVal[L_R_ARM] = newVal[L_L_ARM] = REAR_UP_L_ARM_ANGLE;
+		newVal[R_ARM_PAW] = newVal[L_ARM_PAW] = REAR_UP_ARM_PAW_ANGLE;
 		rabbitState |= REAR_UP;
 	} else {
+		if (rabbitState & NECK_DOWN) {
+			toggleHead();
+		}
 		newVal[RABBIT_Y] = 0;
-		newVal[NECK] = 0;
-		newVal[HEAD] = 0;
 		newVal[U_BODY] = 0;
 		newVal[M_BODY] = 0;
 		newVal[L_BODY] = 0;
@@ -274,37 +293,33 @@ void toggleRearUp() {
 }
 
 void toggleCurlUp() {
-	// rear up and these states are mutually exclusive
-	rabbitState &= ~(R_ARM_UP|L_ARM_UP|R_LEG_UP|L_LEG_UP|REAR_UP|JUMP);
+	// curl up resets these states
+	rabbitState &= ~(NECK_DOWN|R_ARM_UP|L_ARM_UP|R_LEG_UP|L_LEG_UP|REAR_UP|JUMP);
 	if (!(rabbitState & CURL_UP)) {
+		if (!(rabbitState & SHUT_EYES)) {
+			toggleShutEyes();
+		}
 		newVal[RABBIT_Y] = CURL_UP_Y;
 		newVal[NECK] = CURL_UP_NECK_ANGLE;
 		newVal[HEAD] = CURL_UP_HEAD_ANGLE;
-		newVal[R_EYE_SHUT] = CURL_UP_R_EYE_SHUT;
-		newVal[L_EYE_SHUT] = CURL_UP_L_EYE_SHUT;
 		newVal[M_BODY] = CURL_UP_MBODY_ANGLE;
 		newVal[L_BODY] = CURL_UP_LBODY_ANGLE;
 		newVal[U_BODY] = CURL_UP_UBODY_ANGLE;
 		newVal[TAIL] = CURL_UP_TAIL_ANGLE;
-		newVal[U_R_LEG] = CURL_UP_U_LEG_ANGLE;
-		newVal[L_R_LEG] = CURL_UP_L_LEG_ANGLE;
-		newVal[R_LEG_PAW] = CURL_UP_LEG_PAW_ANGLE;
-		newVal[U_L_LEG] = CURL_UP_U_LEG_ANGLE;
-		newVal[L_L_LEG] = CURL_UP_L_LEG_ANGLE;
-		newVal[L_LEG_PAW] = CURL_UP_LEG_PAW_ANGLE;
-		newVal[U_R_ARM] = CURL_UP_U_ARM_ANGLE;
-		newVal[L_R_ARM] = CURL_UP_L_ARM_ANGLE;
-		newVal[R_ARM_PAW] = CURL_UP_ARM_PAW_ANGLE;
-		newVal[U_L_ARM] = CURL_UP_U_ARM_ANGLE;
-		newVal[L_L_ARM] = CURL_UP_L_ARM_ANGLE;
-		newVal[L_ARM_PAW] = CURL_UP_ARM_PAW_ANGLE;
+		newVal[U_R_LEG] = newVal[U_L_LEG] = CURL_UP_U_LEG_ANGLE;
+		newVal[L_R_LEG] = newVal[L_L_LEG] = CURL_UP_L_LEG_ANGLE;
+		newVal[R_LEG_PAW] = newVal[L_LEG_PAW] = CURL_UP_LEG_PAW_ANGLE;
+		newVal[U_R_ARM] = newVal[U_L_ARM] = CURL_UP_U_ARM_ANGLE;
+		newVal[L_R_ARM] = newVal[L_L_ARM] = CURL_UP_L_ARM_ANGLE;
+		newVal[R_ARM_PAW] = newVal[L_ARM_PAW] = CURL_UP_ARM_PAW_ANGLE;
 		rabbitState |= CURL_UP;
 	} else {
+		if (rabbitState & SHUT_EYES) {
+			toggleShutEyes();
+		}
 		newVal[RABBIT_Y] = 0;
 		newVal[NECK] = 0;
 		newVal[HEAD] = 0;
-		newVal[R_EYE_SHUT] = 0;
-		newVal[L_EYE_SHUT] = 0;
 		newVal[M_BODY] = 0;
 		newVal[L_BODY] = 0;
 		newVal[U_BODY] = 0;
@@ -328,6 +343,67 @@ void toggleCurlUp() {
 	oldVal[HEAD] = currVal[HEAD];
 	oldVal[R_EYE_SHUT] = currVal[R_EYE_SHUT];
 	oldVal[L_EYE_SHUT] = currVal[L_EYE_SHUT];
+	oldVal[M_BODY] = currVal[M_BODY];
+	oldVal[L_BODY] = currVal[L_BODY];
+	oldVal[U_BODY] = currVal[U_BODY];
+	oldVal[TAIL] = currVal[TAIL];
+	oldVal[U_R_LEG] = currVal[U_R_LEG];
+	oldVal[L_R_LEG] = currVal[L_R_LEG];
+	oldVal[R_LEG_PAW] = currVal[R_LEG_PAW];
+	oldVal[U_L_LEG] = currVal[U_L_LEG];
+	oldVal[L_L_LEG] = currVal[L_L_LEG];
+	oldVal[L_LEG_PAW] = currVal[L_LEG_PAW];
+	oldVal[U_R_ARM] = currVal[U_R_ARM];
+	oldVal[L_R_ARM] = currVal[L_R_ARM];
+	oldVal[R_ARM_PAW] = currVal[R_ARM_PAW];
+	oldVal[U_L_ARM] = currVal[U_L_ARM];
+	oldVal[L_L_ARM] = currVal[L_L_ARM];
+	oldVal[L_ARM_PAW] = currVal[L_ARM_PAW];
+}
+
+void toggleJump() {
+	// jump resets these states
+	rabbitState &= ~(R_LEG_UP|L_LEG_UP|REAR_UP|CURL_UP);
+	if (!(rabbitState & JUMP)) {
+		if (rabbitState & SHUT_EYES) {
+			toggleShutEyes();
+		}
+		if (rabbitState & NECK_DOWN) {
+			toggleHead();
+		}
+		if (!(rabbitState & R_ARM_UP)) {
+			toggleRightArm();
+		}
+		if (!(rabbitState & L_ARM_UP)) {
+			toggleLeftArm();
+		}
+		newVal[RABBIT_Y] = JUMP_Y;
+		newVal[M_BODY] = JUMP_MBODY_ANGLE;
+		newVal[L_BODY] = JUMP_LBODY_ANGLE;
+		newVal[U_BODY] = JUMP_UBODY_ANGLE;
+		newVal[TAIL] = JUMP_TAIL_ANGLE;
+		newVal[U_R_LEG] = newVal[U_L_LEG] = JUMP_U_LEG_ANGLE;
+		newVal[L_R_LEG] = newVal[L_L_LEG] = JUMP_L_LEG_ANGLE;
+		newVal[R_LEG_PAW] = newVal[L_LEG_PAW] = JUMP_LEG_PAW_ANGLE;
+		rabbitState |= JUMP;
+	} else {
+		if (rabbitState & R_ARM_UP) {
+			toggleRightArm();
+		}
+		if (rabbitState & L_ARM_UP) {
+			toggleLeftArm();
+		}
+		newVal[RABBIT_Y] = 0;
+		newVal[M_BODY] = 0;
+		newVal[L_BODY] = 0;
+		newVal[U_BODY] = 0;
+		newVal[TAIL] = 0;
+		newVal[U_R_LEG] = newVal[U_L_LEG] = 0;
+		newVal[L_R_LEG] = newVal[L_L_LEG] = 0;
+		newVal[R_LEG_PAW] = newVal[L_LEG_PAW] = 0;
+		rabbitState &= ~JUMP;
+	}
+	oldVal[RABBIT_Y] = currVal[RABBIT_Y];
 	oldVal[M_BODY] = currVal[M_BODY];
 	oldVal[L_BODY] = currVal[L_BODY];
 	oldVal[U_BODY] = currVal[U_BODY];
