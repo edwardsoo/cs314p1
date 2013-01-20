@@ -9,17 +9,22 @@
 
 int dumpPPM(int frameNum);
 
-void drawBox(GLfloat,GLfloat,GLfloat);
-void drawCube();
+
 void drawAxis();
 void drawFloor();
 
 unsigned char camera = 'r';
+bool animToggle = false;
+float frames = 1000;
 
 int iCount = 0;       // used for numbering the PPM image files
 int Width = 400;      // window width (pixels)
 int Height = 400;     // window height (pixels)
 bool Dump=false;      // flag set to true when dumping animation frames
+
+void idle() {
+	glutPostRedisplay();
+}
 
 void keyboardCallback(unsigned char c, int x, int y) {
 	switch (c) {
@@ -44,160 +49,40 @@ void keyboardCallback(unsigned char c, int x, int y) {
 	case 'r':
 		camera = 'r';
 		break;
+	case ' ':
+		animToggle = !animToggle;
+		if (!animToggle) {
+			glutIdleFunc(NULL);
+		} else {
+			glutIdleFunc(idle);
+		}
+		break;
 	case 'h':
 		toggleHead();
 		break;
 	case 'l':
-		if (!(rabbitState & L_ARM_UP)) {
-			uLArmAngle = ARM_UP_U_ARM_ANGLE;
-			lLArmAngle = ARM_UP_L_ARM_ANGLE;
-			lArmPaw = ARM_UP_PAW_ANGLE;
-			rabbitState |= L_ARM_UP;
-		} else {
-			uLArmAngle = 0;
-			lLArmAngle = 0;
-			lArmPaw = 0;
-			rabbitState &= ~L_ARM_UP;
-		}
+		toggleLeftArm();
 		break;
 	case 'm':
-		if (!(rabbitState & R_ARM_UP)) {
-			uRArmAngle = ARM_UP_U_ARM_ANGLE;
-			lRArmAngle = ARM_UP_L_ARM_ANGLE;
-			rArmPaw = ARM_UP_PAW_ANGLE;
-			rabbitState |= R_ARM_UP;
-		} else {
-			uRArmAngle = 0;
-			lRArmAngle = 0;
-			rArmPaw = 0;
-			rabbitState &= ~R_ARM_UP;
-		}
+		toggleRightArm();
 		break;
 	case 'n':
-		if (!(rabbitState & R_LEG_UP)) {
-			uLLegAngle = LEG_UP_U_LEG_ANGLE;
-			lLLegAngle = LEG_UP_L_LEG_ANGLE;
-			lLegPawAngle = LEG_UP_PAW_ANGLE;
-			rabbitState |= R_LEG_UP;
-		} else {
-			uLLegAngle = 0;
-			lLLegAngle = 0;
-			lLegPawAngle = 0;
-			rabbitState &= ~R_LEG_UP;
-		}
+		toggleRightLeg();
 		break;
 	case 'o':
-		if (!(rabbitState & L_LEG_UP)) {
-			uRLegAngle = LEG_UP_U_LEG_ANGLE;
-			lRLegAngle = LEG_UP_L_LEG_ANGLE;
-			rLegPawAngle = LEG_UP_PAW_ANGLE;
-			rabbitState |= L_LEG_UP;
-		} else {
-			uRLegAngle = 0;
-			lRLegAngle = 0;
-			rLegPawAngle = 0;
-			rabbitState &= ~L_LEG_UP;
-		}
+		toggleLeftLeg();
 		break;
 	case 't':
-		if (!(rabbitState & REAR_UP)) {
-			yLevel = REAR_UP_Y_LEVEL;
-			mBodyAngle = REAR_UP_MBODY_ANGLE;
-			lBodyAngle = REAR_UP_LBODY_ANGLE;
-			tailAngle = REAR_UP_TAIL_ANGLE;
-			uRLegAngle = REAR_UP_U_LEG_ANGLE;
-			lRLegAngle = REAR_UP_L_LEG_ANGLE;
-			uLLegAngle = REAR_UP_U_LEG_ANGLE;
-			lLLegAngle = REAR_UP_L_LEG_ANGLE;
-			uRArmAngle = REAR_UP_U_ARM_ANGLE;
-			lRArmAngle = REAR_UP_L_ARM_ANGLE;
-			rArmPaw = REAR_UP_ARM_PAW_ANGLE;
-			uLArmAngle = REAR_UP_U_ARM_ANGLE;
-			lLArmAngle = REAR_UP_L_ARM_ANGLE;
-			lArmPaw = REAR_UP_ARM_PAW_ANGLE;
-			rabbitState |= REAR_UP;
-			if (!(rabbitState & NECK_DOWN)) {
-				toggleHead();
-			}
-		} else {
-			yLevel = DEFAULT_Y;
-			mBodyAngle = 0;
-			lBodyAngle = 0;
-			tailAngle = 0;
-			uRLegAngle = 0;
-			lRLegAngle = 0;
-			uLLegAngle = 0;
-			lLLegAngle = 0;
-			uRArmAngle = 0;
-			lRArmAngle = 0;
-			rArmPaw = 0;
-			uLArmAngle = 0;
-			lLArmAngle = 0;
-			lArmPaw = 0;
-			rabbitState &= ~REAR_UP;
-			if (rabbitState & NECK_DOWN) {
-				toggleHead();
-			}
-		}
+		toggleRearUp();
 		break;
 	case 'c':
-		if (!(rabbitState & CURL_UP)) {
-			yLevel = CURL_UP_Y_LEVEL;
-			mBodyAngle = CURL_UP_MBODY_ANGLE;
-			lBodyAngle = CURL_UP_LBODY_ANGLE;
-			uBodyAngle = CURL_UP_UBODY_ANGLE;
-			neckAngle = CURL_UP_NECK_ANGLE;
-			headAngle = CURL_UP_HEAD_ANGLE;
-			tailAngle = CURL_UP_TAIL_ANGLE;
-			lLLegAngle = CURL_UP_L_LEG_ANGLE;
-			lLegPawAngle = CURL_UP_LEG_PAW_ANGLE;
-			lRLegAngle = CURL_UP_L_LEG_ANGLE;
-			rLegPawAngle = CURL_UP_LEG_PAW_ANGLE;
-			uRArmAngle = CURL_UP_U_ARM_ANGLE;
-			lRArmAngle = CURL_UP_L_ARM_ANGLE;
-			rArmPaw = CURL_UP_ARM_PAW_ANGLE;
-			uLArmAngle = CURL_UP_U_ARM_ANGLE;
-			lLArmAngle = CURL_UP_L_ARM_ANGLE;
-			lArmPaw = CURL_UP_ARM_PAW_ANGLE;
-			rabbitState |= CURL_UP;
-		} else {
-			yLevel = DEFAULT_Y;
-			mBodyAngle = 0;
-			lBodyAngle = 0;
-			uBodyAngle = 0;
-			neckAngle = 0;
-			headAngle = 0;
-			tailAngle = 0;
-			lLLegAngle = 0;
-			lLegPawAngle = 0;
-			lRLegAngle = 0;
-			rLegPawAngle = 0;
-			uRArmAngle = 0;
-			lRArmAngle = 0;
-			rArmPaw = 0;
-			uLArmAngle = 0;
-			lLArmAngle = 0;
-			lArmPaw = 0;
-			rabbitState &= ~CURL_UP;
-		}
+		toggleCurlUp();
 		break;
 	case 'e':
-		if (!(rabbitState & R_EAR_DOWN)) {
-			rEarAngle = EAR_DOWN_R_EAR_ANGLE;
-			rabbitState |= R_EAR_DOWN;
-		} else {
-			rEarAngle = 0;
-			rabbitState &= ~R_EAR_DOWN;
-		}
+		toggleRightEar();
 		break;
 	case 'w':
-		if (!(rabbitState & L_EAR_DOWN)) {
-			lEarAngle = -EAR_DOWN_R_EAR_ANGLE;
-			rabbitState |= L_EAR_DOWN;
-		} else {
-			lEarAngle = 0;
-			rabbitState &= ~L_EAR_DOWN;
-		}
+		toggleLeftEar();
 		break;
 	case 'i':
 		dumpPPM(iCount);
@@ -214,15 +99,188 @@ void keyboardCallback(unsigned char c, int x, int y) {
 
 void toggleHead() {
 	if (!(rabbitState & NECK_DOWN)) {
-		neckAngle = NECK_DOWN_NECK_ANGLE;
-		headAngle = NECK_DOWN_HEAD_ANGLE;
+		newNeckAngle = NECK_DOWN_NECK_ANGLE;
+		newHeadAngle = NECK_DOWN_HEAD_ANGLE;
+		oldNeckAngle = neckAngle;
+		oldHeadAngle = headAngle;
 		rabbitState |= NECK_DOWN;
 	} else {
-		neckAngle = 0;
-		headAngle = 0;
+		newNeckAngle = 0;
+		newHeadAngle = 0;
+		oldNeckAngle = neckAngle;
+		oldHeadAngle = headAngle;
 		rabbitState &= ~NECK_DOWN;
 	}
 }
+
+void toggleRightEar() {
+	if (!(rabbitState & R_EAR_DOWN)) {
+		rEarAngle = EAR_DOWN_R_EAR_ANGLE;
+		rabbitState |= R_EAR_DOWN;
+	} else {
+		rEarAngle = 0;
+		rabbitState &= ~R_EAR_DOWN;
+	}
+}
+
+void toggleLeftEar() {
+	if (!(rabbitState & L_EAR_DOWN)) {
+		lEarAngle = -EAR_DOWN_R_EAR_ANGLE;
+		rabbitState |= L_EAR_DOWN;
+	} else {
+		lEarAngle = 0;
+		rabbitState &= ~L_EAR_DOWN;
+	}
+}
+
+void toggleRightArm() {
+	if (!(rabbitState & R_ARM_UP)) {
+		uRArmAngle = ARM_UP_U_ARM_ANGLE;
+		lRArmAngle = ARM_UP_L_ARM_ANGLE;
+		rArmPaw = ARM_UP_PAW_ANGLE;
+		rabbitState |= R_ARM_UP;
+	} else {
+		uRArmAngle = 0;
+		lRArmAngle = 0;
+		rArmPaw = 0;
+		rabbitState &= ~R_ARM_UP;
+	}
+}
+
+void toggleLeftArm() {
+	if (!(rabbitState & L_ARM_UP)) {
+		uLArmAngle = ARM_UP_U_ARM_ANGLE;
+		lLArmAngle = ARM_UP_L_ARM_ANGLE;
+		lArmPaw = ARM_UP_PAW_ANGLE;
+		rabbitState |= L_ARM_UP;
+	} else {
+		uLArmAngle = 0;
+		lLArmAngle = 0;
+		lArmPaw = 0;
+		rabbitState &= ~L_ARM_UP;
+	}
+}
+
+void toggleRightLeg(){ 
+	if (!(rabbitState & R_LEG_UP)) {
+		uLLegAngle = LEG_UP_U_LEG_ANGLE;
+		lLLegAngle = LEG_UP_L_LEG_ANGLE;
+		lLegPawAngle = LEG_UP_PAW_ANGLE;
+		rabbitState |= R_LEG_UP;
+	} else {
+		uLLegAngle = 0;
+		lLLegAngle = 0;
+		lLegPawAngle = 0;
+		rabbitState &= ~R_LEG_UP;
+	}
+}
+
+void toggleLeftLeg() {
+	if (!(rabbitState & L_LEG_UP)) {
+		uRLegAngle = LEG_UP_U_LEG_ANGLE;
+		lRLegAngle = LEG_UP_L_LEG_ANGLE;
+		rLegPawAngle = LEG_UP_PAW_ANGLE;
+		rabbitState |= L_LEG_UP;
+	} else {
+		uRLegAngle = 0;
+		lRLegAngle = 0;
+		rLegPawAngle = 0;
+		rabbitState &= ~L_LEG_UP;
+	}
+}
+
+void toggleRearUp() {
+	rabbitState &= ~CURL_UP;
+	if (!(rabbitState & REAR_UP)) {
+		yLevel = REAR_UP_Y_LEVEL;
+		uBodyAngle = REAR_UP_UBODY_ANGLE;
+		mBodyAngle = REAR_UP_MBODY_ANGLE;
+		lBodyAngle = REAR_UP_LBODY_ANGLE;
+		tailAngle = REAR_UP_TAIL_ANGLE;
+		uRLegAngle = REAR_UP_U_LEG_ANGLE;
+		lRLegAngle = REAR_UP_L_LEG_ANGLE;
+		rLegPawAngle = 0;
+		uLLegAngle = REAR_UP_U_LEG_ANGLE;
+		lLLegAngle = REAR_UP_L_LEG_ANGLE;
+		lLegPawAngle = 0;
+		uRArmAngle = REAR_UP_U_ARM_ANGLE;
+		lRArmAngle = REAR_UP_L_ARM_ANGLE;
+		rArmPaw = REAR_UP_ARM_PAW_ANGLE;
+		uLArmAngle = REAR_UP_U_ARM_ANGLE;
+		lLArmAngle = REAR_UP_L_ARM_ANGLE;
+		lArmPaw = REAR_UP_ARM_PAW_ANGLE;
+		rabbitState |= REAR_UP;
+		if (!(rabbitState & NECK_DOWN)) {
+			toggleHead();
+		}
+	} else {
+		yLevel = DEFAULT_Y;
+		uBodyAngle = 0;
+		mBodyAngle = 0;
+		lBodyAngle = 0;
+		tailAngle = 0;
+		uRLegAngle = 0;
+		lRLegAngle = 0;
+		rLegPawAngle = 0;
+		uLLegAngle = 0;
+		lLLegAngle = 0;
+		lLegPawAngle = 0;
+		uRArmAngle = 0;
+		lRArmAngle = 0;
+		rArmPaw = 0;
+		uLArmAngle = 0;
+		lLArmAngle = 0;
+		lArmPaw = 0;
+		rabbitState &= ~REAR_UP;
+		if (rabbitState & NECK_DOWN) {
+			toggleHead();
+		}
+	}
+}
+
+void toggleCurlUp() {
+	rabbitState &= ~REAR_UP;
+	if (!(rabbitState & CURL_UP)) {
+		yLevel = CURL_UP_Y_LEVEL;
+		mBodyAngle = CURL_UP_MBODY_ANGLE;
+		lBodyAngle = CURL_UP_LBODY_ANGLE;
+		uBodyAngle = CURL_UP_UBODY_ANGLE;
+		neckAngle = CURL_UP_NECK_ANGLE;
+		headAngle = CURL_UP_HEAD_ANGLE;
+		tailAngle = CURL_UP_TAIL_ANGLE;
+		lLLegAngle = CURL_UP_L_LEG_ANGLE;
+		lLegPawAngle = CURL_UP_LEG_PAW_ANGLE;
+		lRLegAngle = CURL_UP_L_LEG_ANGLE;
+		rLegPawAngle = CURL_UP_LEG_PAW_ANGLE;
+		uRArmAngle = CURL_UP_U_ARM_ANGLE;
+		lRArmAngle = CURL_UP_L_ARM_ANGLE;
+		rArmPaw = CURL_UP_ARM_PAW_ANGLE;
+		uLArmAngle = CURL_UP_U_ARM_ANGLE;
+		lLArmAngle = CURL_UP_L_ARM_ANGLE;
+		lArmPaw = CURL_UP_ARM_PAW_ANGLE;
+		rabbitState |= CURL_UP;
+	} else {
+		yLevel = DEFAULT_Y;
+		mBodyAngle = 0;
+		lBodyAngle = 0;
+		uBodyAngle = 0;
+		neckAngle = 0;
+		headAngle = 0;
+		tailAngle = 0;
+		lLLegAngle = 0;
+		lLegPawAngle = 0;
+		lRLegAngle = 0;
+		rLegPawAngle = 0;
+		uRArmAngle = 0;
+		lRArmAngle = 0;
+		rArmPaw = 0;
+		uLArmAngle = 0;
+		lLArmAngle = 0;
+		lArmPaw = 0;
+		rabbitState &= ~CURL_UP;
+	}
+}
+
 
 void reshapeCallback(int w, int h)
 {
@@ -270,9 +328,8 @@ void displayCallback()
 	// Draw your rabbit here
 	// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+	updateRabbit();
 	drawRabbit();
-
-
 
 	// draw after the opaque objects, since it is translucent
 	drawFloor();
@@ -288,6 +345,7 @@ void displayCallback()
 	GLenum error = glGetError();
 	if(error != GL_NO_ERROR)
 		printf("ERROR: %s\n", gluErrorString(error));
+
 }
 
 
@@ -322,7 +380,7 @@ void drawArm(GLfloat uArmAngle, GLfloat lArmAngle, GLfloat pawAngle) {
 	glRotatef(LARM_PAW_ANGLE+pawAngle,0,0,1);
 	glTranslatef(ARM_PAW_LENGTH/2,0,0);
 	drawBox(ARM_PAW_LENGTH,ARM_PAW_WIDTH,ARM_PAW_DEPTH);
-	
+
 	glPopMatrix();
 	glPopMatrix();
 	glPopMatrix();
@@ -356,6 +414,23 @@ void drawLeg(GLfloat uLegAngle, GLfloat lLegAngle, GLfloat pawAngle) {
 	glPopMatrix();
 }
 
+void updateRabbit() {
+	if (!animToggle) {
+		yLevel = newYLevel;
+		headAngle = newHeadAngle;
+		neckAngle = newNeckAngle;
+	} else {
+		if ((newHeadAngle > oldHeadAngle && headAngle < newHeadAngle) || 
+			(newHeadAngle < oldHeadAngle && headAngle > newHeadAngle)) {
+				headAngle += (newHeadAngle-oldHeadAngle)/frames;
+		}
+		if ((newNeckAngle > oldNeckAngle && neckAngle < newNeckAngle) || 
+			(newNeckAngle < oldNeckAngle && neckAngle > newNeckAngle)) {
+				neckAngle += (newNeckAngle-oldNeckAngle)/frames;
+		}
+	}
+}
+
 void drawRabbit() {
 	glColor3f(1,1,1);
 
@@ -374,8 +449,9 @@ void drawRabbit() {
 	glPushMatrix();
 
 	// tail
-	glTranslated(-L_BODY_LENGTH/2,L_BODY_WIDTH/2,0);
+	glTranslated(-L_BODY_LENGTH/2+TAIL_WIDTH/4,L_BODY_WIDTH/2-TAIL_WIDTH/4,0);
 	glRotatef(LBODY_TAIL_ANGLE+tailAngle,0,0,1);
+	glTranslated(-TAIL_WIDTH/2,TAIL_WIDTH/2,0);
 	drawBox(TAIL_WIDTH,TAIL_WIDTH,TAIL_WIDTH);
 	glPopMatrix();
 

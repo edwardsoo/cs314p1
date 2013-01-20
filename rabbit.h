@@ -4,7 +4,7 @@
 #  include <GL/glut.h>
 #endif
 
-// Rabbit dimensions
+// Rabbit bodyy parts dimensions
 #define HEAD_LENGTH 0.7
 #define HEAD_WIDTH 0.7
 #define HEAD_DEPTH 0.6
@@ -50,7 +50,7 @@
 #define ARM_PAW_WIDTH 0.2
 #define ARM_PAW_DEPTH 0.3
 
-// rabbit relative body parts angle
+// rabbit relative body parts default angle
 #define DEFAULT_Y 1.0
 #define JUMP_RABBIT_Y 2.0
 #define UBODY_NECK_ANGLE 20
@@ -90,6 +90,7 @@
 #define LEG_UP_L_LEG_ANGLE -30
 #define LEG_UP_PAW_ANGLE 20
 #define REAR_UP_Y_LEVEL 1.5
+#define REAR_UP_UBODY_ANGLE 15
 #define REAR_UP_MBODY_ANGLE 70
 #define REAR_UP_LBODY_ANGLE -20
 #define REAR_UP_TAIL_ANGLE -45
@@ -111,12 +112,14 @@
 #define CURL_UP_L_ARM_ANGLE 90
 #define CURL_UP_ARM_PAW_ANGLE -5
 
-
+// rabbit variables
+unsigned int rabbitState = 0;
 GLfloat yLevel = DEFAULT_Y;
 GLfloat neckAngle = 0;
 GLfloat headAngle = 0;
 GLfloat rEarAngle = 0;
 GLfloat lEarAngle = 0;
+GLfloat uBodyAngle = 0;
 GLfloat mBodyAngle = 0; 
 GLfloat lBodyAngle = 0;
 GLfloat tailAngle = 0;
@@ -126,18 +129,71 @@ GLfloat rLegPawAngle = 0;
 GLfloat uLLegAngle = 0;
 GLfloat lLLegAngle = 0;
 GLfloat lLegPawAngle = 0;
-GLfloat uBodyAngle = 0;
 GLfloat uRArmAngle = 0;
 GLfloat lRArmAngle = 0;
 GLfloat rArmPaw = 0;
 GLfloat uLArmAngle = 0;
 GLfloat lLArmAngle = 0;
 GLfloat lArmPaw = 0;
-unsigned int rabbitState = 0;
 
+// animation variables
+GLfloat oldYLevel = yLevel;
+GLfloat oldNeckAngle = neckAngle;
+GLfloat oldHeadAngle = headAngle;
+GLfloat oldREarAngle = rEarAngle;
+GLfloat oldLEarAngle = lEarAngle;
+GLfloat oldUBodyAngle = uBodyAngle;
+GLfloat oldMBodyAngle = mBodyAngle; 
+GLfloat oldLBodyAngle = lBodyAngle;
+GLfloat oldTailAngle = tailAngle;
+GLfloat oldURLegAngle = uRLegAngle;
+GLfloat oldLRLegAngle = lRLegAngle;
+GLfloat oldRLegPawAngle = rLegPawAngle;
+GLfloat oldULLegAngle = uLLegAngle;
+GLfloat oldLLLegAngle = lLLegAngle;
+GLfloat oldLLegPawAngle = lLegPawAngle;
+GLfloat oldURArmAngle = uRArmAngle;
+GLfloat oldLRArmAngle = lRArmAngle;
+GLfloat oldRArmPaw = rArmPaw;
+GLfloat oldULArmAngle = uLArmAngle;
+GLfloat oldLLArmAngle = lLArmAngle;
+GLfloat oldLArmPaw = lArmPaw;
+GLfloat newYLevel = yLevel;
+GLfloat newNeckAngle = neckAngle;
+GLfloat newHeadAngle = headAngle;
+GLfloat newREarAngle = rEarAngle;
+GLfloat newLEarAngle = lEarAngle;
+GLfloat newUBodyAngle = uBodyAngle;
+GLfloat newMBodyAngle = mBodyAngle; 
+GLfloat newLBodyAngle = lBodyAngle;
+GLfloat newTailAngle = tailAngle;
+GLfloat newURLegAngle = uRLegAngle;
+GLfloat newLRLegAngle = lRLegAngle;
+GLfloat newRLegPawAngle = rLegPawAngle;
+GLfloat newULLegAngle = uLLegAngle;
+GLfloat newLLLegAngle = lLLegAngle;
+GLfloat newLLegPawAngle = lLegPawAngle;
+GLfloat newURArmAngle = uRArmAngle;
+GLfloat newLRArmAngle = lRArmAngle;
+GLfloat newRArmPaw = rArmPaw;
+GLfloat newULArmAngle = uLArmAngle;
+GLfloat newLLArmAngle = lLArmAngle;
+GLfloat newLArmPaw = lArmPaw;
+
+void updateRabbit();
 void drawRabbit();
 void drawEar(GLfloat);
 void drawArm(GLfloat,GLfloat,GLfloat);
 void drawLeg(GLfloat,GLfloat,GLfloat);
+void drawBox(GLfloat,GLfloat,GLfloat);
+void drawCube();
 
 void toggleHead();
+void toggleRightEar();
+void toggleLeftEar();
+void toggleRightArm();
+void toggleLeftArm();
+void toggleRightLeg();
+void toggleLeftLeg();
+void toggleRearUp();
+void toggleCurlUp();
