@@ -22,7 +22,7 @@
 #define NECK_WIDTH 0.6
 #define NECK_DEPTH 0.5
 #define M_BODY_LENGTH 0.7
-#define M_BODY_WIDTH 0.8
+#define M_BODY_WIDTH 0.75
 #define M_BODY_DEPTH 0.7
 #define U_BODY_LENGTH 0.6
 #define U_BODY_WIDTH 0.7
@@ -50,22 +50,23 @@
 #define ARM_PAW_WIDTH 0.2
 #define ARM_PAW_DEPTH 0.3
 
-// rabbit relative body parts default angle
+
+// rabbit relative body parts default angles
 #define DEFAULT_Y 1.0
-#define JUMP_RABBIT_Y 2.0
 #define UBODY_NECK_ANGLE 20
 #define NECK_HEAD_ANGLE -30
 #define HEAD_EAR_X_ANGLE 15
 #define GROUND_MBODY_ANGLE 20 
-#define MBODY_LBODY_ANGLE 20
+#define MBODY_LBODY_ANGLE 10
 #define MBODY_UBODY_ANGLE -15
-#define LBODY_TAIL_ANGLE 45
+#define LBODY_TAIL_ANGLE 0
 #define LBODY_ULEG_ANGLE -45
 #define ULEG_LLEG_ANGLE -130
-#define LLEG_PAW_ANGLE 135
+#define LLEG_PAW_ANGLE 145
 #define UBODY_UARM_ANGLE -120
 #define UARM_LARM_ANGLE 30
 #define LARM_PAW_ANGLE 85
+
 
 // rabbit states
 #define NECK_DOWN 0x0001
@@ -79,107 +80,89 @@
 #define CURL_UP 0x0100
 #define JUMP 0x0200
 
-// states-specific angles
+
+// states-specific values
 #define NECK_DOWN_NECK_ANGLE -25
 #define NECK_DOWN_HEAD_ANGLE -35
+
 #define EAR_DOWN_R_EAR_ANGLE 150
+
 #define ARM_UP_U_ARM_ANGLE 100
 #define ARM_UP_L_ARM_ANGLE -25
 #define ARM_UP_PAW_ANGLE -45
+
 #define LEG_UP_U_LEG_ANGLE 30
 #define LEG_UP_L_LEG_ANGLE -30
 #define LEG_UP_PAW_ANGLE 20
-#define REAR_UP_Y_LEVEL 1.5
-#define REAR_UP_UBODY_ANGLE 15
-#define REAR_UP_MBODY_ANGLE 70
-#define REAR_UP_LBODY_ANGLE -20
+
+#define REAR_UP_Y 0.5
+#define REAR_UP_NECK_ANGLE -25
+#define REAR_UP_HEAD_ANGLE -35
+#define REAR_UP_U_BODY_ANGLE 15
+#define REAR_UP_M_BODY_ANGLE 70
+#define REAR_UP_L_BODY_ANGLE -10
 #define REAR_UP_TAIL_ANGLE -45
-#define REAR_UP_U_LEG_ANGLE -30
+#define REAR_UP_U_LEG_ANGLE -40
 #define REAR_UP_L_LEG_ANGLE -20
+#define REAR_UP_LEG_PAW_ANGLE 0
 #define REAR_UP_U_ARM_ANGLE -60
 #define REAR_UP_L_ARM_ANGLE 60
 #define REAR_UP_ARM_PAW_ANGLE -150
-#define CURL_UP_Y_LEVEL 0.7
+
+#define CURL_UP_Y -0.3
 #define CURL_UP_MBODY_ANGLE -20
 #define CURL_UP_LBODY_ANGLE 10
 #define CURL_UP_UBODY_ANGLE -10
 #define CURL_UP_NECK_ANGLE 90
 #define CURL_UP_HEAD_ANGLE -60
-#define CURL_UP_TAIL_ANGLE 60
-#define CURL_UP_L_LEG_ANGLE -15
-#define CURL_UP_LEG_PAW_ANGLE 25
+#define CURL_UP_R_EYE_SHUT 0.8
+#define CURL_UP_L_EYE_SHUT 0.8
+#define CURL_UP_TAIL_ANGLE 45
+#define CURL_UP_U_LEG_ANGLE 0
+#define CURL_UP_L_LEG_ANGLE -10
+#define CURL_UP_LEG_PAW_ANGLE 20
 #define CURL_UP_U_ARM_ANGLE -55
 #define CURL_UP_L_ARM_ANGLE 90
 #define CURL_UP_ARM_PAW_ANGLE -5
 
+
+// rabbit varibles indices
+#define RABBIT_Y 0
+#define NECK RABBIT_Y+1
+#define HEAD NECK+1
+#define R_EYE_SHUT HEAD+1
+#define L_EYE_SHUT R_EYE_SHUT+1
+#define R_EAR L_EYE_SHUT+1
+#define L_EAR R_EAR+1
+#define U_BODY L_EAR+1
+#define M_BODY U_BODY+1
+#define L_BODY M_BODY+1
+#define TAIL L_BODY+1
+#define U_R_LEG TAIL+1
+#define L_R_LEG U_R_LEG+1
+#define R_LEG_PAW L_R_LEG+1
+#define U_L_LEG R_LEG_PAW+1
+#define L_L_LEG U_L_LEG+1
+#define L_LEG_PAW L_L_LEG+1
+#define U_R_ARM L_LEG_PAW+1
+#define L_R_ARM U_R_ARM+1
+#define R_ARM_PAW L_R_ARM+1
+#define U_L_ARM R_ARM_PAW+1
+#define L_L_ARM U_L_ARM+1
+#define L_ARM_PAW L_L_ARM+1
+#define NUM_VAR L_ARM_PAW+1
+
 // rabbit variables
 unsigned int rabbitState = 0;
-GLfloat yLevel = DEFAULT_Y;
-GLfloat neckAngle = 0;
-GLfloat headAngle = 0;
-GLfloat rEarAngle = 0;
-GLfloat lEarAngle = 0;
-GLfloat uBodyAngle = 0;
-GLfloat mBodyAngle = 0; 
-GLfloat lBodyAngle = 0;
-GLfloat tailAngle = 0;
-GLfloat uRLegAngle = 0;
-GLfloat lRLegAngle = 0;
-GLfloat rLegPawAngle = 0;
-GLfloat uLLegAngle = 0;
-GLfloat lLLegAngle = 0;
-GLfloat lLegPawAngle = 0;
-GLfloat uRArmAngle = 0;
-GLfloat lRArmAngle = 0;
-GLfloat rArmPaw = 0;
-GLfloat uLArmAngle = 0;
-GLfloat lLArmAngle = 0;
-GLfloat lArmPaw = 0;
+GLfloat currVal[NUM_VAR] = {};
 
 // animation variables
-GLfloat oldYLevel = yLevel;
-GLfloat oldNeckAngle = neckAngle;
-GLfloat oldHeadAngle = headAngle;
-GLfloat oldREarAngle = rEarAngle;
-GLfloat oldLEarAngle = lEarAngle;
-GLfloat oldUBodyAngle = uBodyAngle;
-GLfloat oldMBodyAngle = mBodyAngle; 
-GLfloat oldLBodyAngle = lBodyAngle;
-GLfloat oldTailAngle = tailAngle;
-GLfloat oldURLegAngle = uRLegAngle;
-GLfloat oldLRLegAngle = lRLegAngle;
-GLfloat oldRLegPawAngle = rLegPawAngle;
-GLfloat oldULLegAngle = uLLegAngle;
-GLfloat oldLLLegAngle = lLLegAngle;
-GLfloat oldLLegPawAngle = lLegPawAngle;
-GLfloat oldURArmAngle = uRArmAngle;
-GLfloat oldLRArmAngle = lRArmAngle;
-GLfloat oldRArmPaw = rArmPaw;
-GLfloat oldULArmAngle = uLArmAngle;
-GLfloat oldLLArmAngle = lLArmAngle;
-GLfloat oldLArmPaw = lArmPaw;
-GLfloat newYLevel = yLevel;
-GLfloat newNeckAngle = neckAngle;
-GLfloat newHeadAngle = headAngle;
-GLfloat newREarAngle = rEarAngle;
-GLfloat newLEarAngle = lEarAngle;
-GLfloat newUBodyAngle = uBodyAngle;
-GLfloat newMBodyAngle = mBodyAngle; 
-GLfloat newLBodyAngle = lBodyAngle;
-GLfloat newTailAngle = tailAngle;
-GLfloat newURLegAngle = uRLegAngle;
-GLfloat newLRLegAngle = lRLegAngle;
-GLfloat newRLegPawAngle = rLegPawAngle;
-GLfloat newULLegAngle = uLLegAngle;
-GLfloat newLLLegAngle = lLLegAngle;
-GLfloat newLLegPawAngle = lLegPawAngle;
-GLfloat newURArmAngle = uRArmAngle;
-GLfloat newLRArmAngle = lRArmAngle;
-GLfloat newRArmPaw = rArmPaw;
-GLfloat newULArmAngle = uLArmAngle;
-GLfloat newLLArmAngle = lLArmAngle;
-GLfloat newLArmPaw = lArmPaw;
+#define DELTA_LOWER_BOUND 0.01
+GLfloat oldVal[NUM_VAR] = {};
+GLfloat newVal[NUM_VAR] = {};
 
+
+// function declarations
 void updateRabbit();
 void drawRabbit();
 void drawEar(GLfloat);
