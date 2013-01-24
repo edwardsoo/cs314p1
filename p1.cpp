@@ -228,9 +228,10 @@ void toggleShutEyes() {
 }
 
 void toggleRearUp() {
-	// rear up resets these states
+	// toggling rear up turns off these states
 	rabbitState &= ~(R_ARM_UP|L_ARM_UP|R_LEG_UP|L_LEG_UP|CURL_UP|JUMP);
 	if (!(rabbitState & REAR_UP)) {
+		// rear up turns on these states
 		if (!(rabbitState & NECK_DOWN)) {
 			toggleHead();
 		}
@@ -250,6 +251,7 @@ void toggleRearUp() {
 		newVal[R_ARM_PAW] = newVal[L_ARM_PAW] = REAR_UP_ARM_PAW_ANGLE;
 		rabbitState |= REAR_UP;
 	} else {
+		// un-rearing turns off neck down
 		if (rabbitState & NECK_DOWN) {
 			toggleHead();
 		}
@@ -294,9 +296,10 @@ void toggleRearUp() {
 }
 
 void toggleCurlUp() {
-	// curl up resets these states
+	// toggling curl up turns off these states
 	rabbitState &= ~(NECK_DOWN|R_ARM_UP|L_ARM_UP|R_LEG_UP|L_LEG_UP|REAR_UP|JUMP);
 	if (!(rabbitState & CURL_UP)) {
+		// curl up turns on shut eye
 		if (!(rabbitState & SHUT_EYES)) {
 			toggleShutEyes();
 		}
@@ -315,6 +318,7 @@ void toggleCurlUp() {
 		newVal[R_ARM_PAW] = newVal[L_ARM_PAW] = CURL_UP_ARM_PAW_ANGLE;
 		rabbitState |= CURL_UP;
 	} else {
+		// uncurl turns off shut eye
 		if (rabbitState & SHUT_EYES) {
 			toggleShutEyes();
 		}
@@ -363,9 +367,10 @@ void toggleCurlUp() {
 }
 
 void toggleJump() {
-	// jump resets these states
+	// toggling jump turns off these states
 	rabbitState &= ~(R_LEG_UP|L_LEG_UP|REAR_UP|CURL_UP);
 	if (!(rabbitState & JUMP)) {
+		// jump turns on these states
 		if (rabbitState & SHUT_EYES) {
 			toggleShutEyes();
 		}
@@ -388,6 +393,7 @@ void toggleJump() {
 		newVal[R_LEG_PAW] = newVal[L_LEG_PAW] = JUMP_LEG_PAW_ANGLE;
 		rabbitState |= JUMP;
 	} else {
+		// un-jump turns off these states
 		if (rabbitState & R_ARM_UP) {
 			toggleRightArm();
 		}
