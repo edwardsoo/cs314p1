@@ -26,6 +26,7 @@ int Height = 400;     // window height (pixels)
 bool Dump=false;      // flag set to true when dumping animation frames
 
 void idle() {
+	// only redraw frame if the scene is updated
 	if (updated) {
 		glutPostRedisplay();
 	}
@@ -492,17 +493,19 @@ void updateRabbit() {
 	}
 	printf("\n");
 
+	// set current angles to new values if in jump mode
 	if (!animToggle) {
 		memcpy(currVal,newVal,sizeof(currVal));
 		return;
 	}
 
 	updated = false;
+	// interpolate every variables
 	for (int i = 0; i < NUM_VAR; i++) {
 		if ((newVal[i] > oldVal[i] && currVal[i] < newVal[i]) || 
 			(newVal[i] < oldVal[i] && currVal[i] > newVal[i])) {
 				updated = true;
-				// just set to new value if difference is small
+				// If difference between current and target values is small, set current to new value
 				if (fabs(newVal[i]-currVal[i]) < DELTA_LOWER_BOUND) {
 					currVal[i] = newVal[i];
 				} else {
